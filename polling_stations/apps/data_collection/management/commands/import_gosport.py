@@ -3,12 +3,15 @@ from data_collection.management.commands import BaseXpressDemocracyClubCsvImport
 
 class Command(BaseXpressDemocracyClubCsvImporter):
     council_id = "E07000088"
-    addresses_name = "europarl.2019-05-23/Version 1/2019 EPE - Democracy_Club__Gosport Local Counting Area_23May2019.TSV"
-    stations_name = "europarl.2019-05-23/Version 1/2019 EPE - Democracy_Club__Gosport Local Counting Area_23May2019.TSV"
-    elections = ["europarl.2019-05-23"]
+    addresses_name = "parl.maybe/Version 1/gosport-2019 PGE - Democracy_Club__07November2019.TSV"
+    stations_name = "parl.maybe/Version 1/gosport-2019 PGE - Democracy_Club__07November2019.TSV"
+    elections = ["parl.maybe"]
     csv_delimiter = "\t"
 
     def address_record_to_dict(self, record):
+        if record.post_code == 'PO13 9GL':
+            return None  # Something fishy with ONSPD putting centroid in the airport over the boundary
+
         rec = super().address_record_to_dict(record)
         uprn = record.property_urn.strip().lstrip("0")
 
@@ -38,7 +41,8 @@ class Command(BaseXpressDemocracyClubCsvImporter):
             "37013642",  # PO122BY -> PO123BY : Jervis Block, HMS Sultan, Military Road, Gosport, Hampshire
             "37013642",  # PO122BY -> PO123BY : Mountbatten Block, HMS Sultan, Military Road, Gosport, Hampshire
             "37042796",  # PO122BY -> PO123BG : The Wardroom, HMS Sultan, Military Road, Gosport, Hampshire
-            "37013642",  # PO122BY -> PO123BY : Lefanu Block, HMS Sultan, Military Road, Gosport, Hampshire
+            "37042495",  # PO122AB -> PO121HJ : Dolphin House, Officers Mess Fort Blockhouse, Haslar Road, Gosport, Hampshire
+            # "37013642",  # PO122BY -> PO123BY : Lefanu Block, HMS Sultan, Military Road, Gosport, Hampshire
         ]:
             rec["accept_suggestion"] = True
 
